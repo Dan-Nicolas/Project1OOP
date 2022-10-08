@@ -55,73 +55,109 @@ using std::regex;
 
 	Submission    : one submission per team
 */
+
 string output(const string & inputText)
 {
 	string word = "";
-	string text = inputText + " "; // add a space at the end to denote where the last word ends
-	text = regex_replace(text, regex("\n"), " "); // changes any '\n' found in inputText to a space
-	cout << "TEXT " << text << endl;
-	return "";
+	// input is empty
+	if(inputText.length() == 0)
+	{
+		return word;
+	}
+	string temp = "";
+	string NATO[] = {"alpha", "bravo", "charlie",	"delta", "echo", "foxtrot",	"golf",	"hotel", "india", "juliett",	
+						"kilo",	"lima",	"mike",	"november", "oscar", "papa", "quebec",	"romeo", "sierra",	
+						"tango", "uniform", "victor", "whiskey", "x-ray", "yankee", "zulu",
+					};
+
+	for(int i = 0; i < inputText.length(); i++)
+	{
+		// adds spaces and punctuation when needed and skip to next iteration
+		if(inputText[i] == ' ' || inputText[i] == '?' || inputText[i] == '.' || inputText[i] == '!')
+		{
+			word += inputText[i];
+			continue;
+		}
+		temp += inputText[i];
+		// adds '\n' when needed and skip to next iteration 
+		if(temp == "\n")
+		{
+			word += "\n";
+			temp = "";
+			continue;
+		}
+		//checks to see if temp is found in NATO once its long enough
+		if(temp.length() >= 4)
+		{
+			// makes the word lowercase to match the words in NATO 
+			transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
+			int size = sizeof(NATO) / sizeof(*NATO);
+			// checks to see if temp is in NATO, returns 0 if false 1 if true
+			bool check = find(NATO, NATO + size, temp) != NATO + size;
+			if(check)
+			{
+				word += temp[0];
+				temp = "";
+			}
+		}
+	}
+	cout << "RETURNING " << word << endl;
+	return word;
 }
 
 unsigned int wordSeperator(const string & inputText)
 {
-	unsigned counter = 0;
+	// input is empty
+	if(inputText.length() == 0)
+	{
+		return 0;
+	}
+	int counter = 0;
     string text = inputText + " "; // add a space at the end to denote where the last word ends
 	text = regex_replace(text, regex("\n"), " "); // changes any '\n' found in inputText to a space
 	cout << "TEXT " << text << endl;
+	string temp = "";
 	for(int i = 0; i < text.length(); i++)
 	{
-		// if current character is a space or punctuaction add 1 to counter as there is a new word 
-		if (text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!')
+		temp += text[i];
+		// checks if temp has any letters and isn't just all spaces and punctuation to add to the counter
+		bool check = any_of(temp.begin(), temp.end(), [](const char& c) -> bool { return isalpha(c); });
+		if(check)
 		{
-			counter += 1;
+			// if current character is a space or punctuaction add 1 to counter as there is a new word 
+			if (text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!')
+			{
+				counter += 1;
+			}
 		}
-
 	}
-	
-	cout << "COUNTER " << counter << endl;
-	cout << "TEXT " << text << endl;
-	cout << "INPUT " << inputText << endl;
+	cout << "COUNTER IS " << counter << endl;
 	return counter;
 }
+
 
 unsigned int  funWithCallLetter(const string & inputText, string & outputText, int & uniqueWord ) 
 {
 	int wordCount = wordSeperator(inputText);
-	cout << "WORD COUNT " << wordCount << endl;
-	string NATO[26] = {"Alpha", "Bravo", "Charlie",	"Delta", "Echo", "Foxtrot",	"Golf",	"Hotel", "India", "Juliett",	
-						"Kilo",	"Lima",	"Mike",	"November", "Oscar", "Papa", "Quebec",	"Romeo", "Sierra",	
-						"Tango", "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu",
-					};
-	string words = {};
-	
 	uniqueWord = 0;
 	outputText = "";
-
-	uniqueWord = 0;
-	output(inputText);
+	outputText = output(inputText);
 	return wordCount;
+	
 }
 
 int main()
 {
-	cout << "Yes" << endl;
 	string output;
 	int    uniqueWord;
-	int w = wordSeperator("alphaBravoCharlie\ndeltaechofoxtrot");
-	cout << "\n" << endl;
-	int p = funWithCallLetter("alphaBravoCharlie\ndeltaechofoxtrot", output, uniqueWord);
-	cout << "word ?? " << w << endl;
-	cout << "word !! " << p << endl;
-	cout << "UNI " << uniqueWord << endl;
+
 	//for an empty string
 	assert(funWithCallLetter( "", output, uniqueWord ) == 0);
 	cout << "test #1 completed" << endl;
 
 	//punctuation characters will be considered letter/word
-	//assert( funWithCallLetter( " .   ! ", output, uniqueWord ) == 0);
-	//assert( output.length() == string(" .    ! ").length() );
+	assert( funWithCallLetter( " .   ! ", output, uniqueWord ) == 0);
+	assert( output.length() == string(" .   ! ").length() );
 	cout << "test #2 completed" << endl;
 
 	//multiple characters words separated by a single spaces
