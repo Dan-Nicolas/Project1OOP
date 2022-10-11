@@ -135,6 +135,22 @@ unsigned int wordSeperator(const string & inputText)
 	return counter;
 }
 
+unsigned int uniqueWord(const string & inputText)
+{
+//Count how many unique word was in the input text.
+//The same word,with different case, count for one word(not case sensitive)
+	//input is empty
+	if(inputText.length() == 0)
+	{
+		return 0;
+	}
+	string word;
+	int counter = 0;
+	for(int i = 0; i < word.size(); i++){
+		if(	
+	}
+}
+
 
 unsigned int  funWithCallLetter(const string & inputText, string & outputText, int & uniqueWord ) 
 {
@@ -143,13 +159,14 @@ unsigned int  funWithCallLetter(const string & inputText, string & outputText, i
 	outputText = "";
 	outputText = output(inputText);
 	return wordCount;
+	return uniqueWord;
 	
 }
 
 int main()
 {
 	string output;
-	int    uniqueWord;
+	int uniqueWord;
 
 	//for an empty string
 	assert(funWithCallLetter( "", output, uniqueWord ) == 0);
