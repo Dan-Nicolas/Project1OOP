@@ -56,6 +56,38 @@ using std::regex;
 
 	Submission    : one submission per team
 */
+//map<string, int> uni(const string & inputText)
+//{
+////Count how many unique word was in the input text.
+////The same word,with different case, count for one word(not case sensitive)
+//	//input is empty
+//	if(inputText.length() == 0)
+//	{
+//		return 0;
+//	}
+//	string word;
+//	map<string,int> counter;
+//	//int counter = 0;
+//	
+//	if(!counter.count(word))
+//	{
+//		counter.insert(make_pair(word, 1);
+//    }
+//	else
+//	{
+//		counter[word]++;
+//	}
+//
+//	for(int i = counter.begin(); i < counter.end(); i++){
+//		if(i->second==1)
+//		{
+//			cout << i->first << endl;
+//		}	
+//	}
+//	cout << "UNIQUE WORD COUNT IS: " << counter << endl;
+//	return counter;
+//}
+
 
 string output(const string & inputText)
 {
@@ -74,7 +106,7 @@ string output(const string & inputText)
 	for(int i = 0; i < inputText.length(); i++)
 	{
 		// adds spaces and punctuation when needed and skip to next iteration
-		if(inputText[i] == ' ' || inputText[i] == '?' || inputText[i] == '.' || inputText[i] == '!')
+		if(inputText[i] == ' ' || inputText[i] == '?' || inputText[i] == '.' || inputText[i] == '!' || inputText[i] == '-')
 		{
 			word += inputText[i];
 			continue;
@@ -102,23 +134,43 @@ string output(const string & inputText)
 			}
 		}
 	}
-	cout << "RETURNING " << word << endl;
 	return word;
 }
 
-unsigned int wordSeperator(const string & inputText)
+int * wordSeperator(const string & inputText)
 {
 	// input is empty
 	if(inputText.length() == 0)
 	{
 		return 0;
 	}
+	map<string,int> words; // word = {abc : 1}
 	int counter = 0;
+	int uniqueCounter = 0;
+	static int results[2]; 
     string text = inputText + " "; // add a space at the end to denote where the last word ends
+
+	int hypen = text.find("-"); // gives the index of where '-' is, -1 if cannot be found
+	int nl = text.find("\n");
+
+	if( (hypen < nl) && (hypen + 1 == nl) ) // if '-' is one index right before '\n'
+	{
+		text = regex_replace(text, regex("\n"), ""); // deletes '\n'
+		text = regex_replace(text, regex("-"), ""); // deletes '-'
+	}
+	else if(hypen != -1) // if there is a '-' but not one index right before a "\n" just remove it 
+	{
+		text = regex_replace(text, regex("-"), " ");
+	}
+
 	text = regex_replace(text, regex("\n"), " "); // changes any '\n' found in inputText to a space
-	cout << "TEXT " << text << endl;
-	string temp = "";
-	for(int i = 0; i < text.length(); i++)
+
+	transform(text.begin(), text.end(), text.begin(), ::tolower); // changes text to lowercase
+	string temp = ""; // temp used to keep track of words
+	string uniqueTemp = ""; // used to keep track of unique words
+	
+
+	for(int i = 0; i < text.length(); i++) // iterate thru the word
 	{
 		temp += text[i];
 		// checks if temp has any letters and isn't just all spaces and punctuation to add to the counter
@@ -126,60 +178,59 @@ unsigned int wordSeperator(const string & inputText)
 		if(check)
 		{
 			// if current character is a space or punctuaction add 1 to counter as there is a new word 
-			if (text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!')
+			if (text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!' || text[i] == '-')
 			{
 				counter += 1;
+				temp = "";
 			}
 		}
+		// unique words block
+		if(text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!' || text[i] == '-')
+		{
+			if ( uniqueTemp != "" && words.find(uniqueTemp) == words.end()) {
+				uniqueCounter += 1;
+				words[uniqueTemp] = counter;
+    		}
+			uniqueTemp = "";
+			continue;
+		}
+		uniqueTemp += text[i];
 	}
-	cout << "COUNTER IS " << counter << endl;
-	return counter;
+
+	cout << "THE WORD IS " << text <<  endl;
+
+	results[0] = counter;
+	results[1] = uniqueCounter;
+	cout << "THERE ARE " << results[0] << " WORDS HERE" << endl;
+	cout << "THERE ARE " << results[1] << " UNIQUE WORDS HERE" << endl;
+	return results;
 }
 
-unsigned int uniqueWord(const string & inputText)
-{
-//Count how many unique word was in the input text.
-//The same word,with different case, count for one word(not case sensitive)
-	//input is empty
-	if(inputText.length() == 0)
-	{
-		return 0;
-	}
-	string word;
-	map<string,int> mp;
-	//int counter = 0;
-	
-	if(!mp.count(word)){
-		mp.insert(make_pair(word, 1));
-        }
-	else{
-		mp[word]++;
-	}
-	for(map<string,int> :: iterator i = mp.begin(); i != mp.end(); i++){
-		if(i->second==1){
-			cout << i->first << endl;
-		}	
-	}
-	//cout << "UNIQUE WORD COUNT IS: " << counter << endl;
-	//return counter;
-}
 
 unsigned int  funWithCallLetter(const string & inputText, string & outputText, int & uniqueWord ) 
 {
-	int wordCount = wordSeperator(inputText);
-	int uniqueWord = uniqueWord(inputText);
-	outputText = "";
+	// empty string
+	if(inputText.length() == 0)
+	{
+		uniqueWord = 0;
+		outputText = "";
+		return 0;
+	}
+	int * results_ptr = wordSeperator(inputText); // points to array [ wordCounter, uniqueWordCounter]
+	int wordCount = results_ptr[0];
+	cout << "# of words " << wordCount << endl;
+	uniqueWord = results_ptr[1];
+
+	cout << "# of UNIQUE words " << uniqueWord << endl;
 	outputText = output(inputText);
 	return wordCount;
-	return uniqueWord;
 	
 }
 
 int main()
 {
 	string output;
-	int uniqueWord;
-
+	int    uniqueWord;
 	//for an empty string
 	assert(funWithCallLetter( "", output, uniqueWord ) == 0);
 	cout << "test #1 completed" << endl;
