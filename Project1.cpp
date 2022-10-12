@@ -145,24 +145,23 @@ unsigned int uniqueWord(const string & inputText)
 		return 0;
 	}
 	string word;
-	map<string,int> counter;
+	map<string,int> mp;
 	//int counter = 0;
 	
-	if(!counter.count(word)){
-		counter.insert(make_pair(word, 1)
+	if(!mp.count(word)){
+		mp.insert(make_pair(word, 1));
         }
 	else{
-		counter[word]++;
+		mp[word]++;
 	}
-	for(int i = counter.begin(); i != counter.end(); i++){
+	for(map<string,int> :: iterator i = mp.begin(); i != mp.end(); i++){
 		if(i->second==1){
 			cout << i->first << endl;
 		}	
 	}
-	cout << "UNIQUE WORD COUNT IS: " << counter << endl;
-	return counter;
+	//cout << "UNIQUE WORD COUNT IS: " << counter << endl;
+	//return counter;
 }
-
 
 unsigned int  funWithCallLetter(const string & inputText, string & outputText, int & uniqueWord ) 
 {
