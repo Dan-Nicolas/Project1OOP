@@ -145,10 +145,18 @@ unsigned int uniqueWord(const string & inputText)
 		return 0;
 	}
 	string word;
-	int counter = 0;
-	for(int i = 0; i < word.size(); i++){
-		if(){
-			counter++;
+	map<string,int> counter;
+	//int counter = 0;
+	
+	if(!counter.count(word)){
+		counter.insert(make_pair(word, 1)
+        }
+	else{
+		counter[word]++;
+	}
+	for(int i = counter.begin(); i != counter.end(); i++){
+		if(i->second==1){
+			cout << i->first << endl;
 		}	
 	}
 	cout << "UNIQUE WORD COUNT IS: " << counter << endl;
