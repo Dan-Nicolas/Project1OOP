@@ -8,6 +8,7 @@
 #include <cassert>
 #include <regex>
 
+using namespace std;
 using std::istringstream;
 using std::string;
 using std::cout;
