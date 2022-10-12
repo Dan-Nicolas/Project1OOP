@@ -166,7 +166,7 @@ unsigned int uniqueWord(const string & inputText)
 unsigned int  funWithCallLetter(const string & inputText, string & outputText, int & uniqueWord ) 
 {
 	int wordCount = wordSeperator(inputText);
-	uniqueWord = 0;
+	int uniqueWord = uniqueWord(inputText);
 	outputText = "";
 	outputText = output(inputText);
 	return wordCount;
