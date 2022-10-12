@@ -147,8 +147,12 @@ unsigned int uniqueWord(const string & inputText)
 	string word;
 	int counter = 0;
 	for(int i = 0; i < word.size(); i++){
-		if(	
+		if(){
+			counter++;
+		}	
 	}
+	cout << "UNIQUE WORD COUNT IS: " << counter << endl;
+	return counter;
 }
 
 
