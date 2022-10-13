@@ -1,5 +1,5 @@
 // Project1.cpp : 
-// Your names
+// Your names: Daniel Nicolas and Joe Lane
 //
 #include <string>
 #include <iostream>  
