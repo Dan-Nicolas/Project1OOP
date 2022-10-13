@@ -1,5 +1,5 @@
 // Project1.cpp : 
-// Your names
+// Daniel Nicolas & Joesph Lane
 //
 #include <string>
 #include <iostream>  
@@ -56,39 +56,6 @@ using std::regex;
 
 	Submission    : one submission per team
 */
-//map<string, int> uni(const string & inputText)
-//{
-////Count how many unique word was in the input text.
-////The same word,with different case, count for one word(not case sensitive)
-//	//input is empty
-//	if(inputText.length() == 0)
-//	{
-//		return 0;
-//	}
-//	string word;
-//	map<string,int> counter;
-//	//int counter = 0;
-//	
-//	if(!counter.count(word))
-//	{
-//		counter.insert(make_pair(word, 1);
-//    }
-//	else
-//	{
-//		counter[word]++;
-//	}
-//
-//	for(int i = counter.begin(); i < counter.end(); i++){
-//		if(i->second==1)
-//		{
-//			cout << i->first << endl;
-//		}	
-//	}
-//	cout << "UNIQUE WORD COUNT IS: " << counter << endl;
-//	return counter;
-//}
-
-
 string output(const string & inputText)
 {
 	string word = "";
@@ -102,16 +69,19 @@ string output(const string & inputText)
 						"kilo",	"lima",	"mike",	"november", "oscar", "papa", "quebec",	"romeo", "sierra",	
 						"tango", "uniform", "victor", "whiskey", "x-ray", "yankee", "zulu",
 					};
-
-	for(int i = 0; i < inputText.length(); i++)
+	string text = inputText;
+	transform(text.begin(), text.end(), text.begin(), ::tolower); // changes text to lowercase
+	//text = regex_replace(text, regex("x-ray"), "xray");
+	for(int i = 0; i < text.length(); i++)
 	{
 		// adds spaces and punctuation when needed and skip to next iteration
-		if(inputText[i] == ' ' || inputText[i] == '?' || inputText[i] == '.' || inputText[i] == '!' || inputText[i] == '-')
+		// in the case of 'x-ray' the hyphen will not be included as it is part of the word by default and is treated as another other letter
+		if(text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!' || text[i] == '-'  && (text[i] == '-' && text[i - 1] != 'x'))
 		{
-			word += inputText[i];
+			word += text[i];
 			continue;
 		}
-		temp += inputText[i];
+		temp += text[i];
 		// adds '\n' when needed and skip to next iteration 
 		if(temp == "\n")
 		{
@@ -122,8 +92,6 @@ string output(const string & inputText)
 		//checks to see if temp is found in NATO once its long enough
 		if(temp.length() >= 4)
 		{
-			// makes the word lowercase to match the words in NATO 
-			transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
 			int size = sizeof(NATO) / sizeof(*NATO);
 			// checks to see if temp is in NATO, returns 0 if false 1 if true
 			bool check = find(NATO, NATO + size, temp) != NATO + size;
@@ -139,33 +107,29 @@ string output(const string & inputText)
 
 int * wordSeperator(const string & inputText)
 {
-	// input is empty
-	if(inputText.length() == 0)
-	{
-		return 0;
-	}
 	map<string,int> words; // word = {abc : 1}
 	int counter = 0;
 	int uniqueCounter = 0;
 	static int results[2]; 
     string text = inputText + " "; // add a space at the end to denote where the last word ends
+	transform(text.begin(), text.end(), text.begin(), ::tolower); // changes text to lowercase
 
 	int hypen = text.find("-"); // gives the index of where '-' is, -1 if cannot be found
-	int nl = text.find("\n");
+	int nl = text.find("\n"); 
+	int xray = text.find("x"); // needed for 'x-ray' 
 
 	if( (hypen < nl) && (hypen + 1 == nl) ) // if '-' is one index right before '\n'
 	{
 		text = regex_replace(text, regex("\n"), ""); // deletes '\n'
 		text = regex_replace(text, regex("-"), ""); // deletes '-'
 	}
-	else if(hypen != -1) // if there is a '-' but not one index right before a "\n" just remove it 
+	else if(hypen != -1 && xray + 1 != hypen) // if there is a '-' but not one index right before a "\n"  and not one index after 'x' just remove it 
 	{
 		text = regex_replace(text, regex("-"), " ");
 	}
 
 	text = regex_replace(text, regex("\n"), " "); // changes any '\n' found in inputText to a space
 
-	transform(text.begin(), text.end(), text.begin(), ::tolower); // changes text to lowercase
 	string temp = ""; // temp used to keep track of words
 	string uniqueTemp = ""; // used to keep track of unique words
 	
@@ -178,14 +142,14 @@ int * wordSeperator(const string & inputText)
 		if(check)
 		{
 			// if current character is a space or punctuaction add 1 to counter as there is a new word 
-			if (text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!' || text[i] == '-')
+			if (text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!')
 			{
 				counter += 1;
 				temp = "";
 			}
 		}
 		// unique words block
-		if(text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!' || text[i] == '-')
+		if(text[i] == ' ' || text[i] == '?' || text[i] == '.' || text[i] == '!')
 		{
 			if ( uniqueTemp != "" && words.find(uniqueTemp) == words.end()) {
 				uniqueCounter += 1;
@@ -197,12 +161,9 @@ int * wordSeperator(const string & inputText)
 		uniqueTemp += text[i];
 	}
 
-	cout << "THE WORD IS " << text <<  endl;
-
 	results[0] = counter;
 	results[1] = uniqueCounter;
-	cout << "THERE ARE " << results[0] << " WORDS HERE" << endl;
-	cout << "THERE ARE " << results[1] << " UNIQUE WORDS HERE" << endl;
+
 	return results;
 }
 
@@ -218,80 +179,9 @@ unsigned int  funWithCallLetter(const string & inputText, string & outputText, i
 	}
 	int * results_ptr = wordSeperator(inputText); // points to array [ wordCounter, uniqueWordCounter]
 	int wordCount = results_ptr[0];
-	cout << "# of words " << wordCount << endl;
 	uniqueWord = results_ptr[1];
 
-	cout << "# of UNIQUE words " << uniqueWord << endl;
 	outputText = output(inputText);
 	return wordCount;
 	
-}
-
-int main()
-{
-	string output;
-	int    uniqueWord;
-	//for an empty string
-	assert(funWithCallLetter( "", output, uniqueWord ) == 0);
-	cout << "test #1 completed" << endl;
-
-	//punctuation characters will be considered letter/word
-	assert( funWithCallLetter( " .   ! ", output, uniqueWord ) == 0);
-	assert( output.length() == string(" .   ! ").length() );
-	cout << "test #2 completed" << endl;
-
-	//multiple characters words separated by a single spaces
-	assert( funWithCallLetter( "alphabravocharlie deltaechofoxtrot", output, uniqueWord ) == 2);
-	assert( output.length() == 7 );
-	assert( output.compare("abc def") == 0 );
-	cout << "test #3 completed" << endl;
-
-	//for multiples characters words separated by multiple spaces
-	//and some word in uppercase/lowercase
-	assert( funWithCallLetter( "alphaBravoCharlie   deltaechofoxtrot\n    ", output, uniqueWord ) == 2);
-	assert( output.compare("abc   def\n    ") == 0 );
-	cout << "test #4 completed" << endl;
-		
-	//newline to separate words
-	assert( funWithCallLetter( "alphaBravoCharlie\ndeltaechofoxtrot", output, uniqueWord ) == 2);
-	assert( output.compare("abc\ndef") == 0 );
-	cout << "test #5 completed" << endl;
-		
-	//multiple words before a new line
-	assert( funWithCallLetter( "alphaBravoCharlie deltaechofoxtrot deltaechofoxtrot\nalphaBravoCharlie", output, uniqueWord ) == 4);
-	assert( output.compare("abc def def\nabc") == 0 );
-	cout << "test #6 completed" << endl;
-
-	//check for word separators	
-	assert( funWithCallLetter( "alphaBravo\nalphaBravo!alphaBravo?alphaBravo.alphaBravo", output, uniqueWord ) == 5);
-	assert( output.compare("ab\nab!ab?ab.ab") == 0 );
-	assert( uniqueWord == 1 );
-	cout << "test #7 completed" << endl;
-		
-	//check for uniqueWord and case	sensitive
-	assert( funWithCallLetter( "ALPHAbravo\nalphaBRAVO!AlphaBravo", output, uniqueWord ) == 3);
-	assert( output.compare("ab\nab!ab") == 0 );
-	assert( uniqueWord == 1 );
-	cout << "test #8 completed" << endl;
-
-	//hyphen character followed by a single newline
-	//will considered the 2 parts word as a single word
-	assert( funWithCallLetter( ".whiskeyhotelalphatango!deltaindiadelta yankeeoscaruniform\nfoxtrotindianovemberdelta?", output, uniqueWord ) == 4);
-	assert( output.compare(".what!did you\nfind?") == 0 );
-	assert( uniqueWord == 4 );
-	cout << "test #9 completed" << endl;
-
-
-	//hyphen character as words separator
-	assert( funWithCallLetter( "ALPHAbravo-deltaecho", output, uniqueWord ) == 2);
-	assert( output.compare("ab-de") == 0 );
-	assert( uniqueWord == 2 );
-	cout << "test #10 completed" << endl;
-
-	//hyphen character followed by a single newline
-	//will considered the 2 parts word as a single word
-	assert( funWithCallLetter( "ALPHAbravo-\ndeltaecho", output, uniqueWord ) == 1);
-	assert( output.compare("ab-\nde") == 0 );
-	assert( uniqueWord == 1 );
-	cout << "test #11 completed" << endl;
 }
