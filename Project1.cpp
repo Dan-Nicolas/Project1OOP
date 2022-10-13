@@ -1,9 +1,5 @@
 // Project1.cpp : 
-<<<<<<< HEAD
 // Daniel Nicolas & Joesph Lane
-=======
-// Your names: Daniel Nicolas and Joe Lane
->>>>>>> 3187a5a05b2f3b2394fc04c1e2b1c89bfce8d84b
 //
 #include <string>
 #include <iostream>  
